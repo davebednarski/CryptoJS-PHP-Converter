@@ -53,6 +53,10 @@ var elemPlaceholder2 = document.getElementById('js-decrypted-json');
 elemPlaceholder2.innerText = decryptedPhp2;
 
 
+// Debugging
+var elemDebugging = document.getElementById('js-debugging');
+elemDebugging.innerText = encryptedData1;
+
 //  JS end to end - encryption and decryption
 //var encrypted = CryptoJS.AES.encrypt("Message", "0123456789abcdef0123456789abcdef", { format: CryptoJSFormatter });
 //console.log(encrypted);
