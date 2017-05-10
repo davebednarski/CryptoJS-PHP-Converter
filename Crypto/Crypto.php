@@ -5,6 +5,8 @@ namespace Crypto;
 
 class Crypto
 {
+	// cypher method
+	const AES_256_CBC = 'aes-256-cbc';
 
 	function __construct()
 	{
@@ -17,23 +19,22 @@ class Crypto
 	 * @return string
 	 */
 	public function encrypt($data, $password){
+
+		// pbkdf2 spec recommended salt minimum size is 64 bits.  Below is minimum.
 		$salt = openssl_random_pseudo_bytes(8);
-		$salted = '';
-		$dx = '';
 
-		while (strlen($salted) < 48) {
-			$dx = md5($dx.$password.$salt, true);
-			$salted .= $dx;
-		}
+		// Initialization vector
+		$iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length(self::AES_256_CBC));
 
-		$key = substr($salted, 0, 32);
-		$iv  = substr($salted, 32, 16);
+		// This value is low and should be as high as possible without taking up too much server cycles.
+		$iterations = 1000;
 
-//		$iv = openssl_random_pseudo_bytes(16);
-//		$salt = openssl_random_pseudo_bytes(8);
+		// Generate a key "key stretching" that encrypt will be ok with based off your password.
+		$key = hash_pbkdf2('sha512', $password, $salt, $iterations, 64);
 
-		$encrypted_data = openssl_encrypt(json_encode($data), 'aes-256-cbc', $key, true, $iv);
-		$formattedData = $this->cryptoJsFormatter($encrypted_data, $iv, $salt);
+		$encrypted_data = openssl_encrypt(json_encode($data), self::AES_256_CBC, hex2bin($key), OPENSSL_RAW_DATA, $iv);
+
+		$formattedData = $this->cryptoJsFormatter($encrypted_data, $iv, $salt, $iterations);
 
 		return json_encode($formattedData);
 	}
@@ -43,13 +44,15 @@ class Crypto
 	 * @param $encrypted_data
 	 * @param $iv
 	 * @param $salt
+	 * @param $iterations
 	 * @return array
 	 */
-	private function cryptoJsFormatter($encrypted_data, $iv, $salt) {
+	private function cryptoJsFormatter($encrypted_data, $iv, $salt, $iterations) {
 		return array(
-			"ct" => base64_encode($encrypted_data),
+			"cipherText" => base64_encode($encrypted_data),
 			"iv" => bin2hex($iv),
-			"s" => bin2hex($salt)
+			"salt" => bin2hex($salt),
+			"iter" => base64_encode($iterations)
 		);
 	}
 }

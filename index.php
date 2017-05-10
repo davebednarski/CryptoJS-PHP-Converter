@@ -17,7 +17,7 @@
 		var encryptedData1 = '<?php echo $controller->getExampleEncrypted1(); ?>';
 		var encryptedData2 = '<?php echo $controller->getExampleEncrypted2(); ?>';
 	</script >
-	<script src="js/lib/crypto-js-3.1.2.js"></script>
+	<script src="js/libs/crypto-js-3.1.9-1/crypto-js.js"></script>
 	<script src="js/crypto.js"></script>
 </body>
 </html>

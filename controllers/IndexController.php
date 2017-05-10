@@ -29,12 +29,12 @@ class IndexController
 
 	// example text message
 	public function getExampleEncrypted1() {
-		return $this->getEncryptedData('My secret message', '0123456789abcdef0123456789abcdef');
+		return $this->getEncryptedData('My secret message', 'mypassword');
 	}
 
 	// example json data message
 	public function getExampleEncrypted2() {
-		return $this->getEncryptedData(['secret data' => ['test1' => true, 'test2' => false, 'test3' => true]], '0123456789abcdef0123456789abcdef');
+		return $this->getEncryptedData(['secret data' => ['test1' => true, 'test2' => false, 'test3' => true]], 'mypassword');
 	}
 
 	private function getEncryptedData($data, $password) {
